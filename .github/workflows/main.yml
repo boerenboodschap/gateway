@@ -1,0 +1,23 @@
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
+  DecK:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: decK action
+        # You may pin to the exact commit or the version.
+        # uses: ikeike443/decK-action@2455a45566a9784a0f8c45189092a28d31f66c2a
+        uses: ikeike443/decK-action@v0.1.3
+        with:
+          # decK sub-command you want to execute
+          command: ping
+          # Kong workspaces where yaml should be located
+          kong_workspaces: kong
+          # Just set as secrets.GITHUB_TOKEN here.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # decK option arguments: e.g. --kong-addr secrets.KONG_ADDR --headers secrets.KONG_HEADERS when needed. Make sure you set the secrets in your repo settings.
+          # options: optional
+          
