@@ -16,10 +16,34 @@ plugins:
 services:
 - connect_timeout: 60000
   enabled: true
-  host: order-service
+  host: example.com
+  name: foo
+  port: 443
+  protocol: https
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    name: bar
+    path_handling: v0
+    paths:
+    - /bar
+    - /baz
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: true
+  write_timeout: 60000
+- connect_timeout: 60000
+  enabled: false
+  host: localhost
   name: order-service
   path: /
-  port: 80
+  port: 8080
   protocol: http
   read_timeout: 60000
   retries: 5
@@ -28,7 +52,7 @@ services:
     name: orders
     path_handling: v0
     paths:
-    - /order
+    - /orders
     preserve_host: false
     protocols:
     - http
@@ -42,10 +66,10 @@ services:
   write_timeout: 60000
 - connect_timeout: 60000
   enabled: true
-  host: product-service
+  host: localhost
   name: product-service
-  path: /
-  port: 80
+  path: /api/products
+  port: 8080
   protocol: http
   read_timeout: 60000
   retries: 5
