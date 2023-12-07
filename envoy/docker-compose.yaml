@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  envoy:
+    depends_on:
+     - blue_service
+     - green_service
+    image: envoyproxy/envoy:v1.19.1
+    container_name: envoy
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml"]
+
+  blue_service:
+    image: gcr.io/tetratelabs/color-app:1.0.0
+    container_name: blue_service
+    ports:
+      - "5050:3000"
+    environment:
+      - BG_COLOR=blue
+
+  green_service:
+    image: gcr.io/tetratelabs/color-app:1.0.0
+    container_name: green_service
+    ports:
+      - "5000:3000"
+    environment:
+      - BG_COLOR=green
