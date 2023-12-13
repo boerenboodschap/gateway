@@ -3,8 +3,7 @@ version: "3.8"
 services:
   envoy:
     depends_on:
-     - blue_service
-     - green_service
+     - product-service
     image: envoyproxy/envoy:v1.19.1
     container_name: envoy
     ports:
@@ -13,18 +12,22 @@ services:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
     command: ["envoy", "-c", "/etc/envoy/envoy.yaml"]
 
-  blue_service:
-    image: gcr.io/tetratelabs/color-app:1.0.0
-    container_name: blue_service
-    ports:
-      - "5050:3000"
+  product-service:
+    depends_on:
+      - mongo
+    image: tuin/bb-product-service
+    container_name: product-service
     environment:
-      - BG_COLOR=blue
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ProductDatabase__ConnectionString=mongodb://root:pass@mongo:27017/
+    ports:
+      - "8080:80"
+      - "8081:443"
 
-  green_service:
-    image: gcr.io/tetratelabs/color-app:1.0.0
-    container_name: green_service
+  mongo:
+    image: mongo
     ports:
-      - "5000:3000"
+      - "27017:27017"
     environment:
-      - BG_COLOR=green
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass

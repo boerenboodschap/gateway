@@ -21,80 +21,20 @@ static_resources:
                       domains: ["*"]
                       routes:
                         - match:
-                            prefix: "/blue"
+                            prefix: "/api/products"
                           route:
-                            cluster: blue
-                        - match:
-                            prefix: "/green"
-                          route:
-                            cluster: green
-            - name: envoy.filters.http.jwt_authn
-              typed_config:
-                "@type": type.googleapis.com/envoy.config.filter.http.jwt_authn.v2alpha.JwtAuthentication
-                providers:
-                  auth0:
-                    issuer: https://boerenboodschap.eu.auth0.com/
-                    audiences:
-                      - http://blue_service:3000/
-                    remote_jwks:
-                      http_uri:
-                        uri: https://boerenboodschap.eu.auth0.com/.well-known/jwks.json
-                        cluster: hackndev.eu.auth0.com|443
-                        timeout: 5s
-                      cache_duration:
-                        seconds: 300
-                rules:
-                  - match: { exact: /insecure }
-                  - match: { prefix: / }
-                    requires: { provider_name: auth0 }
+                            cluster: products
   clusters:
-    - name: boerenboodschap.eu.auth0.com|443
-      connect_timeout: 0.25s
-      type: logical_dns
-      lb_policy: round_robin
-      load_assignment:
-        cluster_name: boerenboodschap.eu.auth0.com|443
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: boerenboodschap.eu.auth0.com
-                      port_value: 443
-      transport_socket:
-        name: envoy.transport_sockets.tls
-        typed_config:
-          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-          sni: boerenboodschap.eu.auth0.com
-          common_tls_context:
-            validation_context:
-              match_subject_alt_names:
-                - exact: "*.eu.auth0.com"
-              trusted_ca:
-                filename: /etc/ssl/certs/ca-certificates.crt
-    - name: blue
-      connect_timeout: 5s
+    - name: products
+      connect_timeout: 2s
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: blue
+        cluster_name: products
         endpoints:
           - lb_endpoints:
               - endpoint:
                   address:
                     socket_address:
-                      address: blue_service
-                      port_value: 3000
-    - name: green
-      connect_timeout: 5s
-      type: STRICT_DNS
-      lb_policy: ROUND_ROBIN
-      load_assignment:
-        cluster_name: green
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: green_service
-                      port_value: 3000
+                      address: product-service
+                      port_value: 80
