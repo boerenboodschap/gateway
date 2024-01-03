@@ -1,15 +1,58 @@
 name: CI-CD
-run-name: ${{ github.actor }} triggered this awesome pipeline 🚀
-on: [push]
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
 jobs:
-  DecK:
+  lint:
+    # Set the agent to run on
     runs-on: ubuntu-latest
+
+    ############################################
+    # Grant status permission for MULTI_STATUS #
+    ############################################
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+
+    ##################
+    # Load all steps #
+    ##################
     steps:
-      - name: Check out repository code
+      ##########################
+      # Checkout the code base #
+      ##########################
+      - name: Checkout Code
         uses: actions/checkout@v4
-      # - name: test
-      #   run: pwd && ls
-      - name: Install decK
-        run: curl -sL https://github.com/kong/deck/releases/download/v1.29.2/deck_1.29.2_linux_amd64.tar.gz -o deck.tar.gz && tar -xf deck.tar.gz -C /tmp && sudo cp /tmp/deck /usr/local/bin/
-      - name: decK ping
-        run: deck gateway ping
+        with:
+          # Full git history is needed to get a proper
+          # list of changed files within `super-linter`
+          fetch-depth: 0
+
+      ################################
+      # Run Linter against code base #
+      ################################
+      - name: Lint Code Base
+        uses: super-linter/super-linter@v5
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  krakend-dockerhub:
+    needs: [lint]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Docker
+        uses: docker/setup-buildx-action@v1
+      - name: Login to Docker
+        run: docker login --username=${{ secrets.DOCKERHUB_USERNAME }} --password=${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build Image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:latest ./krakend
+      - name: Push Image To DockerHub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:latest
