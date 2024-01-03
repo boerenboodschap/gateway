@@ -3,7 +3,7 @@
   "version": 3,
   "name": "BoerenBoodschap - API Gateway",
   "disable_rest": true,
-  "timeout": "3000ms",
+  "timeout": "30000ms",
   "cache_ttl": "300s",
   "port": 8080,
   
