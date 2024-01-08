@@ -7,7 +7,7 @@
   "cache_ttl": "300s",
   "endpoints": [
     {
-      "@comment": "Feature: REST - products",
+      "@comment": "Feature: REST - GET products",
       "endpoint": "/products",
       "input_query_strings": ["*"],
       "output_encoding": "string",
