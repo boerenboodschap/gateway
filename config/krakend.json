@@ -3,7 +3,6 @@
   "version": 3,
   "name": "Boerenboodschap Gateway",
   "port": 8080,
-  "host": ["http://fake_api:8080"],
   "timeout": "30000ms",
   "cache_ttl": "300s",
   "endpoints": [
@@ -46,10 +45,12 @@
       "endpoint": "/shop",
       "backend": [
         {
+          "host": ["http://fake_api:8080"],
           "url_pattern": "/shop/campaigns.json",
           "allow": ["campaigns"]
         },
         {
+          "host": ["http://fake_api:8080"],
           "url_pattern": "/shop/products.json",
           "allow": ["products"],
           "extra_config": {
@@ -71,10 +72,12 @@
       "endpoint": "/sequential",
       "backend": [
         {
+          "host": ["http://fake_api:8080"],
           "url_pattern": "/hotels/1.json",
           "allow": ["destination_id"]
         },
         {
+          "host": ["http://fake_api:8080"],
           "url_pattern": "/destinations/{resp0_destination_id}.json"
         }
       ],
@@ -89,6 +92,7 @@
       "endpoint": "/public",
       "backend": [
         {
+          "host": ["http://fake_api:8080"],
           "url_pattern": "/hotels/1.json"
         }
       ]
@@ -109,6 +113,7 @@
       "endpoint": "/private/auth0",
       "backend": [
         {
+          "host": ["http://fake_api:8080"],
           "url_pattern": "/user/1.json"
         }
       ],
@@ -127,6 +132,7 @@
       "endpoint": "/token",
       "backend": [
         {
+          "host": ["http://fake_api:8080"],
           "url_pattern": "/token.json"
         }
       ],
@@ -146,6 +152,7 @@
       "method": "POST",
       "backend": [
         {
+          "host": ["http://fake_api:8080"],
           "url_pattern": "/__debug/post"
         }
       ]
