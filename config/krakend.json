@@ -10,7 +10,7 @@
       "@comment": "Feature: REST - GET all-products",
       "endpoint": "/products",
       "input_query_strings": ["*"],
-      "output_encoding": "string",
+      "output_encoding": "json",
       "backend": [
         {
           "host": ["product-service:80"],
@@ -40,6 +40,19 @@
           "jwk_url": "https://tuin.eu.auth0.com/.well-known/jwks.json"
         }
       }
+    },
+    {
+      "@comment": "Feature: REST - GET product",
+      "endpoint": "/products/{id}",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["product-service:80"],
+          "url_pattern": "/api/products/{id}",
+          "encoding": "string"
+        }
+      ]
     },
     {
       "@comment": "Feature: Aggregation + Basic transformation (filtering & mapping) + grouping",
