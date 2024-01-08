@@ -7,10 +7,25 @@
   "cache_ttl": "300s",
   "endpoints": [
     {
+      "@comment": "Feature: REST - POST product",
+      "method": "POST",
+      "endpoint": "/products/{id}",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["product-service:80"],
+          "url_pattern": "/api/products/{id}",
+          "encoding": "string",
+          "method": "POST"
+        }
+      ]
+    },
+    {
       "@comment": "Feature: REST - GET all-products",
       "endpoint": "/products",
       "input_query_strings": ["*"],
-      "output_encoding": "json",
+      "output_encoding": "string",
       "backend": [
         {
           "host": ["product-service:80"],
@@ -43,6 +58,7 @@
     },
     {
       "@comment": "Feature: REST - GET product",
+      "method": "GET",
       "endpoint": "/products/{id}",
       "input_query_strings": ["*"],
       "output_encoding": "string",
@@ -50,7 +66,38 @@
         {
           "host": ["product-service:80"],
           "url_pattern": "/api/products/{id}",
-          "encoding": "string"
+          "encoding": "string",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: REST - PUT product",
+      "method": "PUT",
+      "endpoint": "/products/{id}",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["product-service:80"],
+          "url_pattern": "/api/products/{id}",
+          "encoding": "string",
+          "method": "PUT"
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: REST - DELETE product",
+      "method": "DELETE",
+      "endpoint": "/products/{id}",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["product-service:80"],
+          "url_pattern": "/api/products/{id}",
+          "encoding": "string",
+          "method": "DELETE"
         }
       ]
     },
