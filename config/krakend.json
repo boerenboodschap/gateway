@@ -22,6 +22,28 @@
       ]
     },
     {
+      "@comment": "Feature: REST - GET all-products but protected",
+      "endpoint": "/auth0/products/",
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["product-service:80"],
+          "url_pattern": "/api/products",
+          "encoding": "string",
+          "method": "GET"
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "audience": ["https://api.boerenboodschap.com"],
+          "jwk_url": "https://tuin.eu.auth0.com/.well-known/jwks.json"
+        }
+      }
+    },
+    {
       "@comment": "Feature: Aggregation + Basic transformation (filtering & mapping) + grouping",
       "endpoint": "/git/{user}",
       "backend": [
