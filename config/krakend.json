@@ -7,6 +7,20 @@
   "cache_ttl": "300s",
   "endpoints": [
     {
+      "@comment": "Feature: REST - products",
+      "endpoint": "/products",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+
+      "backend": [
+        {
+          "host": ["product-service:80"],
+          "url_pattern": "/api/products",
+          "encoding": "string"
+        }
+      ]
+    },
+    {
       "@comment": "Feature: Aggregation + Basic transformation (filtering & mapping) + grouping",
       "endpoint": "/git/{user}",
       "backend": [
@@ -94,17 +108,6 @@
         {
           "host": ["http://fake_api:8080"],
           "url_pattern": "/hotels/1.json"
-        }
-      ]
-    },
-    {
-      "@comment": "Feature: REST - products",
-      "endpoint": "/products",
-      "input_query_strings": ["*"],
-      "backend": [
-        {
-          "host": ["product-service:80"],
-          "url_pattern": "/api/products"
         }
       ]
     },
