@@ -1,0 +1,209 @@
+{
+  "$schema": "https://www.krakend.io/schema/v3.json",
+  "version": 3,
+  "name": "Boerenboodschap Gateway",
+  "port": 8080,
+  "host": ["http://fake_api:8080"],
+  "timeout": "30000ms",
+  "cache_ttl": "300s",
+  "endpoints": [
+    {
+      "@comment": "Feature: Aggregation + Basic transformation (filtering & mapping) + grouping",
+      "endpoint": "/git/{user}",
+      "backend": [
+        {
+          "host": ["https://api.github.com"],
+          "url_pattern": "/users/{user}",
+          "allow": [
+            "avatar_url",
+            "name",
+            "company",
+            "blog",
+            "location",
+            "mail",
+            "hireable",
+            "followers",
+            "public_repos",
+            "public_gists"
+          ],
+          "mapping": {
+            "blog": "website"
+          },
+          "group": "user"
+        },
+        {
+          "host": ["https://api.github.com"],
+          "url_pattern": "/users/{user}/repos",
+          "mapping": {
+            "collection": "repos"
+          },
+          "is_collection": true
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: Aggregation + backend rate limiting + endpoint rate limiting",
+      "endpoint": "/shop",
+      "backend": [
+        {
+          "url_pattern": "/shop/campaigns.json",
+          "allow": ["campaigns"]
+        },
+        {
+          "url_pattern": "/shop/products.json",
+          "allow": ["products"],
+          "extra_config": {
+            "qos/ratelimit/proxy": {
+              "max_rate": 1,
+              "capacity": 1
+            }
+          }
+        }
+      ],
+      "extra_config": {
+        "qos/ratelimit/router": {
+          "max_rate": 2
+        }
+      }
+    },
+    {
+      "@comment": "Feature: Sequential calls, using values from 1st call response into 2nd call request",
+      "endpoint": "/sequential",
+      "backend": [
+        {
+          "url_pattern": "/hotels/1.json",
+          "allow": ["destination_id"]
+        },
+        {
+          "url_pattern": "/destinations/{resp0_destination_id}.json"
+        }
+      ],
+      "extra_config": {
+        "proxy": {
+          "sequential": true
+        }
+      }
+    },
+    {
+      "@comment": "Feature: A public endpoint that requires no authentication",
+      "endpoint": "/public",
+      "backend": [
+        {
+          "url_pattern": "/hotels/1.json"
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: REST - products",
+      "endpoint": "/products",
+      "input_query_strings": ["*"],
+      "backend": [
+        {
+          "host": ["product-service:80"],
+          "url_pattern": "/api/products"
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: Authorization based on JWT (using Auth0)",
+      "endpoint": "/private/auth0",
+      "backend": [
+        {
+          "url_pattern": "/user/1.json"
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "audience": ["http://api.example.com"],
+          "roles_key": "http://api.example.com/custom/roles",
+          "roles": ["user", "admin"],
+          "jwk_url": "https://albert-test.auth0.com/.well-known/jwks.json"
+        }
+      }
+    },
+    {
+      "@comment": "Feature: JWT signing, as described at https://www.krakend.io/docs/authorization/jwt-signing/",
+      "endpoint": "/token",
+      "backend": [
+        {
+          "url_pattern": "/token.json"
+        }
+      ],
+      "extra_config": {
+        "auth/signer": {
+          "alg": "HS256",
+          "kid": "sim2",
+          "keys_to_sign": ["access_token", "refresh_token"],
+          "jwk_url": "http://fake_api:8080/jwk/symmetric.json",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "@comment": "Feature: Only POST method allowed",
+      "endpoint": "/post",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/__debug/post"
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: Mocked response",
+      "endpoint": "/mocked-response",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        { "host": ["http://unexistent_backend"], "url_pattern": "/" }
+      ],
+      "extra_config": {
+        "proxy": {
+          "static": {
+            "data": {
+              "an_integer": 123,
+              "an_array": ["arr1", "arr2"],
+              "an_object": {
+                "obj": "obj1"
+              }
+            },
+            "strategy": "always"
+          }
+        }
+      }
+    }
+  ],
+  "sequential_start": true,
+  "extra_config": {
+    "telemetry/metrics": {
+      "collection_time": "30s",
+      "listen_address": ":8090"
+    },
+    "telemetry/logging": {
+      "level": "DEBUG",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true
+    },
+    "telemetry/gelf": {
+      "address": "logstash:12201",
+      "enable_tcp": false
+    },
+    "security/cors": {
+      "allow_origins": ["*"],
+      "allow_methods": ["POST", "GET"],
+      "allow_headers": ["Origin", "Authorization", "Content-Type"],
+      "expose_headers": ["Content-Length"],
+      "max_age": "12h"
+    },
+    "auth/revoker": {
+      "N": 10000000,
+      "P": 0.0000001,
+      "hash_name": "optimal",
+      "TTL": 1500,
+      "port": 1234,
+      "token_keys": ["jti"]
+    }
+  }
+}

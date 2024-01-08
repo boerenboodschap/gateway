@@ -1,5 +1,9 @@
-# BoerenBoodschap gateway
+# Boerenboodschap gateway
 
-Kong API gateway for the BoerenBoodschap project
+A Envoy gateway application that allows secure access to all microservices in the boerenboodschap application.
 
-Manage config changes with the [decK](https://docs.konghq.com/deck/latest/) tool.
+## Run in kubernetes
+
+```bash
+helm install gateway ./helm
+```
