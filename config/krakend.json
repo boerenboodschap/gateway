@@ -102,6 +102,101 @@
       ]
     },
     {
+      "@comment": "Feature: REST - POST order",
+      "method": "POST",
+      "endpoint": "/orders",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["order-service:80"],
+          "url_pattern": "/api/orders",
+          "encoding": "string",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: REST - GET all-orders",
+      "endpoint": "/orders",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["order-service:80"],
+          "url_pattern": "/api/orders",
+          "encoding": "string"
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: REST - GET all-orders but protected",
+      "endpoint": "/auth0/orders/",
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["order-service:80"],
+          "url_pattern": "/api/orders",
+          "encoding": "string",
+          "method": "GET"
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "audience": ["https://api.boerenboodschap.com"],
+          "jwk_url": "https://tuin.eu.auth0.com/.well-known/jwks.json"
+        }
+      }
+    },
+    {
+      "@comment": "Feature: REST - GET order",
+      "method": "GET",
+      "endpoint": "/orders/{id}",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["order-service:80"],
+          "url_pattern": "/api/orders/{id}",
+          "encoding": "string",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: REST - PUT order",
+      "method": "PUT",
+      "endpoint": "/orders/{id}",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["order-service:80"],
+          "url_pattern": "/api/orders/{id}",
+          "encoding": "string",
+          "method": "PUT"
+        }
+      ]
+    },
+    {
+      "@comment": "Feature: REST - DELETE order",
+      "method": "DELETE",
+      "endpoint": "/orders/{id}",
+      "input_query_strings": ["*"],
+      "output_encoding": "string",
+      "backend": [
+        {
+          "host": ["order-service:80"],
+          "url_pattern": "/api/orders/{id}",
+          "encoding": "string",
+          "method": "DELETE"
+        }
+      ]
+    },
+    {
       "@comment": "Feature: Aggregation + Basic transformation (filtering & mapping) + grouping",
       "endpoint": "/git/{user}",
       "backend": [
