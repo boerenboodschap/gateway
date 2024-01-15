@@ -378,8 +378,13 @@
     },
     "security/cors": {
       "allow_origins": ["*"],
-      "allow_methods": ["POST", "GET"],
-      "allow_headers": ["Origin", "Authorization", "Content-Type"],
+      "allow_methods": ["POST", "GET", "PUT", "DELETE"],
+      "allow_headers": [
+        "Origin",
+        "Authorization",
+        "Content-Type",
+        "Credentials"
+      ],
       "expose_headers": ["Content-Length"],
       "max_age": "12h"
     },
