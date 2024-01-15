@@ -11,7 +11,7 @@
       "method": "POST",
       "endpoint": "/products",
       "input_query_strings": ["*"],
-      "input_headers": ["Authorization"],
+      "input_headers": ["*"],
       "output_encoding": "no-op",
       "backend": [
         {
