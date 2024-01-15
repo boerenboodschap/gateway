@@ -11,12 +11,12 @@
       "method": "POST",
       "endpoint": "/products",
       "input_query_strings": ["*"],
-      "output_encoding": "string",
+      "output_encoding": "no-op",
       "backend": [
         {
           "host": ["product-service:80"],
           "url_pattern": "/api/products",
-          "encoding": "string",
+          "encoding": "no-op",
           "method": "POST"
         }
       ]
@@ -25,12 +25,12 @@
       "@comment": "Feature: REST - GET all-products",
       "endpoint": "/products",
       "input_query_strings": ["*"],
-      "output_encoding": "string",
+      "output_encoding": "no-op",
       "backend": [
         {
           "host": ["product-service:80"],
           "url_pattern": "/api/products",
-          "encoding": "string"
+          "encoding": "no-op"
         }
       ]
     },
